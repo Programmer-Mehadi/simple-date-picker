@@ -1,3 +1,5 @@
+- <h2>Live: https://simple-date-picker-blush.vercel.app/</h2>
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
