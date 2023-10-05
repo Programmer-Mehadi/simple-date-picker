@@ -41,7 +41,7 @@ const SimpleDatePicker = () => {
   const [selectedValue, setSelectedValue] = useState<{
     year: number;
     month: string;
-    day: number;
+    day: number | string;
     fullDate: string;
   }>({
     year: 2023,
@@ -156,9 +156,8 @@ const SimpleDatePicker = () => {
       ]);
     } else if (selectedValue.month === "February") {
       if (
-        (parseInt(selectedValue.year) % 4 === 0 &&
-          parseInt(selectedValue.year) % 100 !== 0) ||
-        parseInt(selectedValue.year) % 400 === 0
+        (selectedValue.year % 4 === 0 && selectedValue.year % 100 !== 0) ||
+        selectedValue.year % 400 === 0
       ) {
         setCurrentDays([
           ...emptyDay,
