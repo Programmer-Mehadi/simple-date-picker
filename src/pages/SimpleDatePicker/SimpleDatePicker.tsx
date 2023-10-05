@@ -1,8 +1,16 @@
 import { useEffect, useState } from "react";
 
 const SimpleDatePicker = () => {
-  const [yearsList, setYearsList] = useState<number[]>([]);
-  const monthsList: string[] = [
+  interface IYEAR {
+    year: number;
+    id: number;
+  }
+  interface IMONTH {
+    id: number;
+    name: string;
+  }
+  const [yearsList, setYearsList] = useState<IYEAR[]>([]);
+  const monthsList: IMONTH[] = [
     { id: 1, name: "January" },
     { id: 2, name: "February" },
     { id: 3, name: "March" },
@@ -16,16 +24,32 @@ const SimpleDatePicker = () => {
     { id: 11, name: "November" },
     { id: 12, name: "December" },
   ];
-  const [currentDays, setCurrentDays] = useState<number[]>([]);
-  const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const [currentDays, setCurrentDays] = useState<number[]>([
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+    22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+  ]);
+  const daysOfWeek: string[] = [
+    "Sun",
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat",
+  ];
 
-  const [selectedValue, setSelectedValue] = useState({
-    year: "",
-    month: "",
-    day: "",
+  const [selectedValue, setSelectedValue] = useState<{
+    year: number;
+    month: string;
+    day: number;
+    fullDate: string;
+  }>({
+    year: 2023,
+    month: "October",
+    day: 5,
     fullDate: "",
   });
-  const [showDatePicker, setShowDatePicker] = useState(true);
+  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
   // set years list
   useEffect(() => {
     const yearIdArray: any = [];
@@ -38,9 +62,6 @@ const SimpleDatePicker = () => {
   }, []);
 
   useEffect(() => {
-    console.log(
-      new Date(`${selectedValue.year}-${selectedValue.month}-01`).getDay()
-    );
     const get_day = new Date(
       `${selectedValue.year}-${selectedValue.month}-01`
     ).getDay();
@@ -209,9 +230,9 @@ const SimpleDatePicker = () => {
 
   useEffect(() => {
     if (
-      selectedValue.year !== "" &&
+      selectedValue.year !== 0 &&
       selectedValue.month !== "" &&
-      selectedValue.day !== ""
+      selectedValue.day !== 0
     ) {
       const newDate = new Date(
         `${selectedValue.year}-${selectedValue.month}-${selectedValue.day}`
@@ -225,17 +246,22 @@ const SimpleDatePicker = () => {
         ...selectedValue,
         fullDate: `${year}/${month}/${day}`,
       });
-      setShowDatePicker(false);
+    } else {
+      setSelectedValue({
+        ...selectedValue,
+        fullDate: ``,
+      });
     }
   }, [selectedValue.day, selectedValue.month, selectedValue.year]);
 
-  console.log(currentDays);
   return (
-    <section className="flex justify-center p-8">
-      <div>
-        <h1>Simple Date Picker</h1>
+    <section className="flex md:justify-center p-8">
+      <div className="relative z-20">
+        <h1 className="w-full text-2xl font-bold mb-4 text-blue-700">
+          Simple Date Picker
+        </h1>
 
-        <div className="my-32">
+        <div className="my-6 lg:my-32">
           <div className="relative top-0 left-0">
             <div
               className="w-full"
@@ -244,7 +270,7 @@ const SimpleDatePicker = () => {
               <p className="form-label text-dark-500 font-semibold mb-[4px]">
                 Due Date
               </p>
-              <div className="border-[2px] rounded-lg border-blue-400 px-2 cursor-pointer">
+              <div className="border-[2px] rounded-lg border-blue-400 px-2 cursor-pointer bg-white">
                 <input
                   type="text"
                   className="form-control focus:outline-none p-2 cursor-pointer"
@@ -255,42 +281,43 @@ const SimpleDatePicker = () => {
               </div>
             </div>
             {showDatePicker && (
-              <div className="absolute top-20 left-0 rounded-lg border-[1px] border-slate-400 mt-3 p-5 shadow-lg min-w-[400px]">
+              <div className="absolute top-20 left-0 rounded-lg border-[1px] border-slate-400 mt-3 p-5 shadow-lg min-w-[80vw] lg:min-w-[400px] max-w-[50vw] bg-white">
                 <div className="flex justify-between gap-8">
                   <select
+                    className="pr-2"
                     name=""
                     id=""
                     onChange={(e) =>
                       setSelectedValue({
                         ...selectedValue,
-                        year: e.target.value,
+                        year: parseInt(e.target.value),
                       })
                     }
                     value={selectedValue.year}
                   >
                     <option value="">Select Year</option>
-                    {yearsList?.map(
-                      (year: { year: string | number; id: number }) => (
-                        <option key={year.id} value={year.year}>
-                          {year.year}
-                        </option>
-                      )
-                    )}
+                    {yearsList?.map((year: IYEAR, index: number) => (
+                      <option key={index} value={year.year}>
+                        {year.year}
+                      </option>
+                    ))}
                   </select>
                   <select
+                    className="pr-2"
                     name=""
                     id=""
                     onChange={(e) => {
                       setSelectedValue({
                         ...selectedValue,
                         month: e.target.value,
+                        day: 0,
                       });
                     }}
                     value={selectedValue.month}
                   >
                     <option value="">Select Month</option>
-                    {monthsList?.map((month: { name: string; id: number }) => (
-                      <option key={month.id} value={month.name}>
+                    {monthsList?.map((month: IMONTH, index: number) => (
+                      <option key={index} value={month.name}>
                         {month.name}
                       </option>
                     ))}
@@ -309,16 +336,22 @@ const SimpleDatePicker = () => {
                     ))}
                   </div>
                   <div className="grid grid-cols-7 gap-2">
-                    {currentDays?.map((day: any, index: number) => {
+                    {currentDays?.map((day: number, index: number) => {
                       return (
                         <div
-                          className="flex justify-center cursor-pointer"
+                          className={`flex justify-center cursor-pointer ${
+                            day === selectedValue.day
+                              ? "text-blue-500 font-bold "
+                              : ""
+                          }`}
                           key={index}
                           onClick={() => {
-                            setSelectedValue({
-                              ...selectedValue,
-                              day: day,
-                            });
+                            if (day !== -1) {
+                              setSelectedValue({
+                                ...selectedValue,
+                                day: day,
+                              });
+                            }
                           }}
                         >
                           {day !== -1 ? day : ""}
@@ -332,6 +365,14 @@ const SimpleDatePicker = () => {
           </div>
         </div>
       </div>
+      {showDatePicker && (
+        <div
+          className="w-full h-full absolute top-0 left-0 bg-gray-100 z-10 bg-opacity-20"
+          onClick={() => setShowDatePicker(false)}
+        >
+          {" "}
+        </div>
+      )}
     </section>
   );
 };
