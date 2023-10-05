@@ -255,7 +255,7 @@ const SimpleDatePicker = () => {
   }, [selectedValue.day, selectedValue.month, selectedValue.year]);
 
   return (
-    <section className="flex md:justify-center p-8">
+    <section className="flex lg:justify-center p-8">
       <div className="relative z-20">
         <h1 className="w-full text-2xl font-bold mb-4 text-blue-700">
           Simple Date Picker
